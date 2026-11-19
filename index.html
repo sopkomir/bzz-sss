@@ -371,10 +371,10 @@ const GL={
  'párové spoluhlásky':'Dvojice znelá + neznelá, ktoré sa líšia znelosťou. Väčšina dvojíc sa tvorí na rovnakom mieste a rovnakým spôsobom. Dvojica h – ch je osobitný prípad: h sa tvorí v hrtane, ch pri mäkkom podnebí. Všetky páry: b–p, d–t, ď–ť, dz–c, dž–č, g–k, h–ch, v–f, z–s, ž–š.',
  'nepárové spoluhlásky':'Znelé spoluhlásky bez neznelého dvojčaťa: m, n, ň, l, ĺ, ľ, r, ŕ, j. Hovorí sa im aj zvučné – dajú sa spievať.',
  'miesto tvorenia':'Miesto v hlasovom ústrojenstve, kde hlásku tvoríme – napríklad pri perách, zuboch, podnebí alebo v hrtane.',
- 'spodobovanie':'Prispôsobenie párovej spoluhlásky v reči susednej hláske. Nastáva na začiatku slova (vták [fták]), vo vnútri slova (kresba [krezba]), na konci slova pred pauzou (dub [dup]) a na hranici slov (s bratom [z bratom], loď pláva [loť pláva]). Píšeme však podľa pravopisu.',
+ 'spodobovanie':'Zmena znelosti párovej spoluhlásky pred inou hláskou alebo pred pauzou. Nastáva na začiatku slova (vták [fták]), vo vnútri slova (kresba [krezba]), na konci slova pred pauzou (dub [dup]) a na hranici slov (s bratom [z bratom], loď pláva [loť pláva]). Píšeme však podľa pravopisu.',
  'výslovnosť':'Ako slovo naozaj znie, keď ho povieme.',
  'pravopis':'Ako slovo správne napíšeme. Nie vždy sa zhoduje s výslovnosťou.',
- 'predĺženie slova':'Trik na overenie: slovo zmeníme tak, aby za spoluhláskou nasledovala samohláska (dub → duby, hrad → hrady). Potom počujeme, aké písmeno tam patrí.',
+ 'predĺženie slova':'Trik na overenie: slovo zmeníme tak, aby za spoluhláskou nasledovala samohláska (dub → duby, hrad → hrady). Podľa toho, čo počujeme, zistíme, ktoré písmeno napísať.',
  'fonetický prepis':'Zápis v hranatých zátvorkách, ktorý ukazuje, ako slovo znie: dub [dup], vták [fták].'
 };
 function rich(t){return t.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g,(m,k,f)=>`<span class="gl" role="button" tabindex="0" data-k="${k}">${f||k}</span>`)}
@@ -405,12 +405,12 @@ const TWIN={};ALLP.forEach(([a,b])=>{TWIN[a]=b;TWIN[b]=a});
 const ZNELE=new Set(ALLP.map(p=>p[0]));
 const TIAH=new Set(['v','f','z','s','ž','š','h','ch']); // hlásky, ktoré sa dajú ťahať bez samohlásky
 const NEP=['m','n','ň','l','ĺ','ľ','r','ŕ','j'];
-const SPEV={m:'ma',n:'na','ň':'ňa',l:'la','ĺ':'la','ľ':'ľa',r:'ra','ŕ':'ra',j:'ja'}; // spievame slabikami, nie ťahanou hláskou
-const spev=x=>{const s=SPEV[x]||x+'a';return `${s}-${s}-${s}`};
+const SPEV={m:'ma',n:'na','ň':'ňa',l:'la','ĺ':'stĺp','ľ':'ľa',r:'ra','ŕ':'tŕň',j:'ja'}; // spievame slabikami, nie ťahanou hláskou
+const spev=x=>{const s=SPEV[x]||x+'a';const j=s.length>2?' – ':'-';return [s,s,s].join(j)};
 const nepFor=l=>l==='junior'?['m','n','l','r','j']:NEP;
 const SYL={b:'ba',p:'pa',d:'da',t:'ta','ď':'ďa','ť':'ťa',dz:'dza',c:'ca','dž':'dža','č':'ča',g:'ga',k:'ka',h:'hhhh',ch:'chchch',v:'vvvv',f:'ffff',z:'zzzz',s:'ssss','ž':'žžžž','š':'šššš'};
-const MOUTH={b:'obe pery',p:'obe pery',v:'pera a zuby',f:'pera a zuby',d:'špička jazyka',t:'špička jazyka',z:'špička jazyka',s:'špička jazyka',dz:'špička jazyka',c:'špička jazyka','ž':'jazyk pri podnebí','š':'jazyk pri podnebí','dž':'jazyk pri podnebí','č':'jazyk pri podnebí','ď':'jazyk pri podnebí','ť':'jazyk pri podnebí',g:'vzadu v ústach',k:'vzadu v ústach',h:'vzadu v hrdle',ch:'vzadu v ústach'};
-const PLACES=['obe pery','pera a zuby','špička jazyka','jazyk pri podnebí','vzadu v ústach alebo v hrdle'];
+const MOUTH={b:'obe pery',p:'obe pery',v:'pera a zuby',f:'pera a zuby',d:'špička jazyka',t:'špička jazyka',z:'špička jazyka',s:'špička jazyka',dz:'špička jazyka',c:'špička jazyka','ž':'jazyk kúsok za hornými zubami','š':'jazyk kúsok za hornými zubami','dž':'jazyk kúsok za hornými zubami','č':'jazyk kúsok za hornými zubami','ď':'jazyk pri podnebí','ť':'jazyk pri podnebí',g:'vzadu v ústach',k:'vzadu v ústach',h:'vzadu v hrdle',ch:'vzadu v ústach'};
+const PLACES=['obe pery','pera a zuby','špička jazyka','jazyk kúsok za hornými zubami','jazyk pri podnebí','vzadu v ústach alebo v hrdle'];
 const placeOf=l=>/vzadu/.test(MOUTH[l])?'vzadu v ústach alebo v hrdle':MOUTH[l];
 // slová na konci so spodobovaním: [základ, písmeno, dôkaz, obrázok]
 const W=[
@@ -436,13 +436,13 @@ const VYSL=[
  ['včela','fčela','včela','Pred neznelým č sa v vysloví ako f.','z'],
  ['kresba','krezba','kresba','s stojí pred znelým b, preto hlas zapne: s → z.','v'],
  ['prosba','prozba','prosba','Pred znelým b sa s vysloví znelo ako z.','v'],
- ['kde','gďe','kďe','k pred znelým d zapne hlas: k → g.','z'],
+ ['kde','gďe','kďe','V slove kde vyslovujeme d mäkko ako ď. Pred znelým ď sa k vysloví ako g.','z'],
  ['ľahký','ľachkí','ľahkí','h pred neznelým k stratí hlas: h → ch.','v'],
  ['s bratom','z bratom','s bratom','Predložka s sa prispôsobí znelému b: znie [z].','h'],
  ['k domu','g domu','k domu','Predložka k pred znelým d znie [g].','h'],
  ['od stola','ot stola','od stola','d pred neznelým s znie [t].','h'],
  ['pod stromom','pot stromom','pod stromom','Predložka pod pred neznelým s znie [pot].','h'],
- ['myš ušla','myž ušla','myš ušla','Na hranici slov: neznelá spoluhláska na konci slova pred samohláskou ďalšieho slova sa v plynulej reči vysloví znelo.','h'],
+ ['myš ušla','miž ušla','miš ušla','Na hranici slov: neznelá spoluhláska na konci slova pred samohláskou ďalšieho slova sa v plynulej reči vysloví znelo.','h'],
  ['kvet vonia','kved vonia','kvet vonia','Na hranici slov: neznelé t pred znelou spoluhláskou (aj pred samohláskou alebo zvučnou spoluhláskou) sa v plynulej reči vysloví znelo.','h'],
  ['loď pláva','loť pláva','loď pláva','Na hranici slov: znelé ď pred neznelým p stratí hlas.','h'],
  ['vlak mešká','vlag mešká','vlak mešká','Na hranici slov: k pred zvučnou spoluhláskou m sa v plynulej reči vysloví znelo [g].','h']
@@ -493,7 +493,7 @@ function sorter(box,ok,items,bins){
    if(c.dataset.bin===bn.id){b.classList.remove('show');got.append(el('span',{class:'mini'},c.dataset.v));c.remove();sel=null;beep(1);fbSet(fb,'✔ '+whyLetter(c.dataset.v),1);if(--left===0)setTimeout(()=>ok(helped),500)}
    else{c._m=(c._m||0)+1;shake(c);beep(0);
     if(c._m>=3){helped=true;const right=bw.children[bins.findIndex(x=>x.id===c.dataset.bin)];bw.querySelectorAll('.bin').forEach(x=>x.classList.remove('show'));right.classList.add('show');fbSet(fb,'Pomôcka: '+whyLetter(c.dataset.v)+' Teraz ju zaraď do zvýrazneného koša.',0)}
-    else{const v=c.dataset.v;fbSet(fb,'✘ '+(TIAH.has(v)?`Ruka na krk a ťahaj „${SYL[v]}“. Bzučí to?`:NEP.includes(v)?`Zaspievaj slabiky „${spev(v)}“. Ide to? Má ${v} dvojča?`:`Porovnaj „${SYL[v]}“ a „${SYL[TWIN[v]]}“ – počúvaj iba začiatok. Ktorá bzučí?`),0)}}
+    else{const v=c.dataset.v;fbSet(fb,'✘ '+(TIAH.has(v)?`Ruka na krk a ťahaj „${SYL[v]}“. Bzučí to?`:NEP.includes(v)?`Má ${v} šepkajúce dvojča? Nemá – je to spevák. Zaspievaj si: ${spev(v)}.`:`Porovnaj „${SYL[v]}“ a „${SYL[TWIN[v]]}“ – počúvaj iba začiatok. Ktorá bzučí?`),0)}}
   };bw.append(b)});
  shuffle(items).forEach(it=>{const c=el('button',{class:'card2'},it.label);c.dataset.bin=it.bin;c.dataset.v=it.label;c.onclick=()=>{pool.querySelectorAll('.card2').forEach(x=>x.classList.remove('sel'));sel=c;c.classList.add('sel')};pool.append(c)});
  box.append(pool,bw,fb);
@@ -502,7 +502,7 @@ function sayBtn(text,label){return el('button',{class:'say',onclick:()=>speak(te
 
 /* ===================== Register úloh ===================== */
 const T={
- krk:{n:'Ruka na krku',i:l=>'Polož si ruku na krk a ťahaj hlásku dlho, bez samohlásky: zzzz, ssss. Sleduj iba túto jednu hlásku. Cítiš bzučanie? Potom ťukni.',run(box,ok,l){
+ krk:{n:'Ruka na krku',i:l=>'Polož si prsty na krk, na hrtan, a ťahaj hlásku dlho, bez samohlásky: zzzz, ssss. Sleduj, či pod prstami cítiš chvenie. Potom ťukni.',run(box,ok,l){
   const letters=shuffle(pairsFor(l).flat().filter(x=>TIAH.has(x)));
   rounds(box,ok,l==='junior'?6:8,i=>{const x=letters[i%letters.length];const th=throatSvg();const zn=ZNELE.has(x);
    return{prompt:el('div',{class:'prompt'},th,el('div',{class:'bigl'},x),sayBtn(SYL[x]||x)),cls:'',keep:true,
@@ -548,19 +548,19 @@ const T={
     cls:'one',options:PLACES,keep:true,answer:pl,
     explain:p[0]==='h'?'h vzniká v hrtane, ch vzadu v ústach pri mäkkom podnebí. Miesto nie je úplne rovnaké, no v slovenčine tvoria pár: h je znelé, ch neznelé a v reči sa navzájom zastupujú (sneh [sňech]).':`${p[0]} aj ${p[1]}: ${pl}. Preto sú pár – rozdiel je iba v hlase.`,
     hint:'Povedz obe hlásky pomaly a sleduj, čo sa dotýka: pery, zuby alebo jazyk?'}})}},
- spevaci:{n:'Nájdi spevákov',i:l=>'Ťukni na všetky hlásky, ktoré nemajú dvojča. Pozor: speváka spoznáš tak, že ho zaspievaš v slabikách – ma-ma-ma, la-la-la, ra-ra-ra.',run(box,ok,l){
+ spevaci:{n:'Nájdi spevákov',i:l=>'Ťukni na všetky hlásky, ktoré nemajú dvojča. Spevákov si zaspievaj v slabikách – ma-ma-ma, la-la-la, ra-ra-ra.',run(box,ok,l){
   const nep=shuffle(nepFor(l)).slice(0,l==='junior'?4:6);const n=l==='junior'?12:16;
   const rest=shuffle(pairsFor(l).flat()).slice(0,n-nep.length);let left=nep.length;
   const g=el('div',{class:'lgrid'}),fb=el('div',{class:'fb'}),cnt=el('p',{class:'mute'});
   const upd=()=>cnt.textContent=left?`Zostáva nájsť: ${left} ${decl(left,'spevák','speváci','spevákov')}`:'Všetci speváci nájdení!';upd();
   shuffle([...nep,...rest]).forEach(x=>{const b=el('button',{class:'card2'},x);b.onclick=()=>{if(b.disabled)return;
-   if(NEP.includes(x)){b.classList.add('ok');b.disabled=true;beep(1);left--;upd();fbSet(fb,`✔ ${x} – zaspievaj „${spev(x)}“. Dá sa spievať a dvojča nemá.`,1);if(!left)setTimeout(ok,500)}
+   if(NEP.includes(x)){b.classList.add('ok');b.disabled=true;beep(1);left--;upd();fbSet(fb,`✔ ${x} nemá dvojča – je to spevák. Zaspievaj si: ${spev(x)}.`,1);if(!left)setTimeout(ok,500)}
    else{shake(b);beep(0);fbSet(fb,'✘ '+whyLetter(x),0)}};g.append(b)});
   box.append(cnt,g,fb)}},
- tri:{n:'Tri koše',i:l=>'Roztrieď hlásky: bzučiace dvojčatá, šepkajúce dvojčatá a speváci bez dvojčaťa.',run(box,ok,l){
+ tri:{n:'Tri koše',i:l=>'Roztrieď spoluhlásky: bzučiace dvojčatá, šepkajúce dvojčatá a speváci bez dvojčaťa.',run(box,ok,l){
   const ps=shuffle(pairsFor(l));const k=l==='junior'?3:4;
   const items=[...ps.slice(0,k).map(p=>({label:p[0],bin:'z'})),...ps.slice(k,2*k).map(p=>({label:p[1],bin:'n'})),...shuffle(nepFor(l)).slice(0,k).map(x=>({label:x,bin:'s'}))];
-  sorter(box,ok,items,[{id:'z',icon:'🐝',label:l==='junior'?'Bzučí a má dvojča':'Párové znelé'},{id:'n',icon:'🐍',label:l==='junior'?'Šepká':'Párové neznelé'},{id:'s',icon:'🎤',label:l==='junior'?'Spevák bez dvojčaťa':'Nepárové znelé'}])}},
+  sorter(box,ok,items,[{id:'z',icon:'🐝',label:l==='junior'?'Bzučí a má dvojča':'Znelé párové'},{id:'n',icon:'🐍',label:l==='junior'?'Šepká':'Neznelé párové'},{id:'s',icon:'🎤',label:l==='junior'?'Spevák bez dvojčaťa':'Znelé nepárové'}])}},
  votrelec:{n:'Votrelec',i:l=>'Tri hlásky patria k sebe, jedna nie. Ktorá je votrelec?',run(box,ok,l){
   const nep=nepFor(l),ps=pairsFor(l);
   rounds(box,ok,5,i=>{const t=rnd(3);let g,odd,ex;
@@ -568,7 +568,7 @@ const T={
    else if(t===1){g=shuffle(ps).slice(0,3).map(p=>p[0]);odd=pick(ps.filter(p=>!g.includes(p[0])))[1];ex=`${g.join(', ')} sú znelé (bzučia). ${odd} je neznelá.`}
    else{g=shuffle(ps).slice(0,3).map(p=>p[1]);odd=rnd(2)?pick(nep):pick(ps.filter(p=>!g.includes(p[1])))[0];ex=`${g.join(', ')} sú neznelé (šepkajú). ${odd} je znelá.`}
    return{big:true,cls:'four',options:[...g,odd],answer:odd,explain:ex,hint:'Povedz každú hlásku s rukou na krku. Ktorá sa správa inak?'}})}},
- koniec:{n:'Stratený hlas',i:l=>'Na konci slova hlas šepká. Ktoré písmeno napíšeš? Predĺž slovo a počúvaj!',run(box,ok,l){
+ koniec:{n:'Stratený hlas',i:l=>'Na konci slova hlas šepká. Ktoré písmeno napíšeš? Povedz slovo v inom tvare, napríklad dub – duby, a počúvaj.',run(box,ok,l){
   const ws=shuffle(wordsFor(l));
   rounds(box,ok,6,i=>{const w=ws[i%ws.length];const [z,x,pr,em]=w;const tw=TWIN[x];
    const gap=el('span',{class:'gap'},'_');
@@ -608,7 +608,7 @@ const QZ={
     l=>({q:'Čím sa líšia dvojčatá b a p?',opts:['Iba hlasom','Polohou jazyka','Tvarom pier'],a:'Iba hlasom',ex:'Pri b aj p sa stretnú pery. b bzučí, p šepká.'}),
     l=>l==='junior'?{q:'Ktoré hlásky sú dvojčatá?',opts:['z – s','z – ž','s – š'],a:'z – s',ex:'zzzz a ssss – jazyk je rovnako, mení sa iba bzučanie.'}:{q:'Koľko párov znelých a neznelých spoluhlások má slovenčina?',opts:['10','8','12'],a:'10',ex:'b–p, d–t, ď–ť, dz–c, dž–č, g–k, h–ch, v–f, z–s, ž–š.'}],
  3:[l=>{const nep=nepFor(l),ps=pairsFor(l);const x=pick(nep);return{q:'Ktorá hláska nemá dvojča?',opts:[x,...shuffle(ps.flat()).slice(0,3)],a:x,ex:`${x} je spevák – nepárová znelá spoluhláska.`}},
-    l=>({q:'Prečo sa nepárovým hovorí speváci (zvučné)?',opts:['Hlas majú stále zapnutý','Hlas majú stále vypnutý','Hlas si stále striedajú'],a:'Hlas majú stále zapnutý',ex:'Skús ma-ma-ma, la-la-la, ra-ra-ra – hlas pri nich stále znie, preto sa dajú spievať.'}),
+    l=>({q:'Prečo sa nepárovým hovorí speváci (zvučné)?',opts:['Hlas majú stále zapnutý','Hlas majú stále vypnutý','Hlas si stále striedajú'],a:'Hlas majú stále zapnutý',ex:'Hlas majú stále zapnutý a nemajú neznelé dvojča. Zaspievaj si: ma-ma-ma, la-la-la, ra-ra-ra.'}),
     l=>({q:'Je „m“ znelá alebo neznelá?',opts:['Znelá, bez dvojčaťa','Neznelá, bez dvojčaťa','Znelá, s dvojčaťom n'],a:'Znelá, bez dvojčaťa',ex:'m bzučí, no neznelý pár nemá.'})],
  4:[l=>{const w=pick(wordsFor(l));return{q:'Ktoré slovo je napísané správne?',opts:[w[0]+w[1],w[0]+TWIN[w[1]]],a:w[0]+w[1],ex:`${w[0]}${w[1]} – lebo ${w[2]}.`}},
     l=>{const w=pick(wordsFor(l));return{q:`Ako overíš posledné písmeno v slove ${w[0]}${w[1]}?`,opts:['Predĺžim ho a počúvam','Zašepkám ho a počúvam','Zrýchlim ho a počúvam'],a:'Predĺžim ho a počúvam',ex:`${w[0]}${w[1]} → ${w[2]}. Keď za spoluhláskou nasleduje samohláska, počuť ju jasne.`}},
@@ -622,28 +622,28 @@ const CH=[
   intro:['KANÁL 01','Vypínač hlasu','Ruka na krk a počúvaj.','Naučíš sa rozoznať znelé a neznelé spoluhlásky bez bifľovania tabuľky.'],
   story:{junior:'Bzzz! Ja som včielka Bzzz a bzučím stále – zzzz. Môj kamarát hadík iba syčí – ssss. Polož si ruku na krk a povedz zzzz. Cítiš, ako to šteklí? To sú tvoje [[hlasivky]]. Keď syčíš ako hadík, mlčia. Pomôž nám opraviť pult v Rádiu Ozvena!',
    stred:'Ahoj, som hadík Sss, moderátor ranných správ v Rádiu Ozvena. Dnes ráno sa pokazil vypínač hlasu a hlásky sa pomiešali. Prvý krok opravy: zisti, ktoré spoluhlásky majú hlas zapnutý ([[znelá spoluhláska|znelé]]) a ktoré vypnutý ([[neznelá spoluhláska|neznelé]]). Pomôže ti ruka na krku.',
-   senior:'Tu Echo, starý rozhlasový mikrofón. Diagnostika: [[hlasivky]] buď kmitajú, alebo nie. Ak kmitajú, vzniká [[znelá spoluhláska]], ak nie, [[neznelá spoluhláska]]. Šepot vypína hlasivky úplne – preto v šepote zmizne rozdiel medzi b a p. Over si to a nakalibruj pult.'},
+   senior:'Tu Echo, starý rozhlasový mikrofón. Diagnostika: [[hlasivky]] buď kmitajú, alebo nie. Ak kmitajú, vzniká [[znelá spoluhláska]], ak nie, [[neznelá spoluhláska]]. Pri šepote hlasivky nekmitajú, preto začiatky slabík ba a pa znejú podobne. Over si to a nakalibruj pult.'},
   tasks:{junior:['krk','vypinac'],stred:['krk','vypinac','dvekose'],senior:['krk','vypinac','dvekose']},
   clue:'Niektoré hlásky vyzerajú v ústach úplne rovnako. Hľadaj dvojčatá na kanáli 02.'},
  {no:2,fq:'92.4',name:'Dvojčatá',d:'Párové spoluhlásky: takmer rovnaké ústa, iný hlas.',
   intro:['KANÁL 02','Dvojčatá','Takmer rovnaké ústa, iný hlas.','Spoznáš páry znelých a neznelých spoluhlások – a pochopíš, prečo tvoria páry.'],
   story:{junior:'Pozri sa: keď povieš ba a potom pa, ústa robia to isté! Líši sa iba bzučanie. Takým hláskam hovoríme dvojčatá – jedno bzučí, druhé šepká. Nájdi ich všetky!',
    stred:'Na pulte svietia dvojice hlások. Takmer každá sa tvorí rovnako – rovnaké pery, rovnaký jazyk – a líši sa vypínačom hlasu. (Iba h a ch sa tvoria trochu inde.) Volajú sa [[párové spoluhlásky]]. Keď ich spojíš, tabuľku poskladáš bez bifľovania.',
-   senior:'[[párové spoluhlásky]] sa líšia znelosťou a väčšina z nich má rovnaké [[miesto tvorenia]]. Výnimkou je h – ch: h vzniká v hrtane, ch pri mäkkom podnebí. Keď vieš, kde v ústach hláska vzniká, dvojča takmer vždy nájdeš. Zmapuj všetkých 10 párov vrátane dz–c a dž–č.'},
+   senior:'[[párové spoluhlásky|Párové spoluhlásky]] sa líšia znelosťou a väčšina z nich má rovnaké [[miesto tvorenia]]. Výnimkou je h – ch: h vzniká v hrtane, ch pri mäkkom podnebí. Keď vieš, kde v ústach hláska vzniká, dvojča takmer vždy nájdeš. Zmapuj všetkých 10 párov vrátane dz–c a dž–č.'},
   tasks:{junior:['pexeso','spoj'],stred:['pexeso','spoj'],senior:['spoj','usta','pexeso']},
   clue:'Niektoré hlásky nemajú dvojča a spievajú stále. Hľadaj ich na kanáli 03.'},
  {no:3,fq:'97.0',name:'Speváci',d:'Nepárové spoluhlásky – hlas zapnutý navždy.',
   intro:['KANÁL 03','Speváci','Hlas zapnutý navždy.','Rozoznáš nepárové spoluhlásky, ktoré nemajú neznelé dvojča.'],
-  story:{junior:'Niektoré hlásky radi spievajú. Pozor, spievame ich v slabikách: ma-ma-ma, na-na-na, la-la-la, ra-ra-ra. Zaspievaj so mnou! Hlas pri nich stále znie. Nemajú šepkajúce dvojča, preto sa pri spodobovaní nemenia. Hovoríme im [[nepárové spoluhlásky|speváci]].',
-   stred:'V zbore Rádia Ozvena spieva 9 hlások: m, n, ň, l, ĺ, ľ, r, ŕ, j. Hlas majú stále zapnutý a neznelé dvojča nemajú. V tabuľke sú ako [[nepárové spoluhlásky|nepárové znelé]].',
-   senior:'Nepárové znelé (zvučné) spoluhlásky: m, n, ň, l, ĺ, ľ, r, ŕ, j. Dajú sa predĺžene spievať, nemajú neznelý pár, a preto sa samy nespodobujú. Nauč sa ich rýchlo rozoznať – na kanáli 04 to využiješ.'},
+  story:{junior:'Niektoré hlásky si radi zaspievame. Pozor, spievame ich v slabikách: ma-ma-ma, na-na-na, la-la-la, ra-ra-ra. Zaspievaj so mnou! Hlas pri nich stále znie. Nemajú šepkajúce dvojča, preto sa pri spodobovaní nemenia. Hovoríme im [[nepárové spoluhlásky|speváci]].',
+   stred:'V zbore Rádia Ozvena spieva 9 hlások: m, n, ň, l, ĺ, ľ, r, ŕ, j. Hlas majú stále zapnutý a neznelé dvojča nemajú. V tabuľke sú ako [[nepárové spoluhlásky|znelé nepárové]].',
+   senior:'Znelé nepárové (zvučné) spoluhlásky: m, n, ň, l, ĺ, ľ, r, ŕ, j. Hlas majú stále zapnutý, nemajú neznelý pár, a preto sa samy nespodobujú. Nauč sa ich rýchlo rozoznať – na kanáli 04 to využiješ.'},
   tasks:{junior:['spevaci','tri'],stred:['spevaci','tri','votrelec'],senior:['spevaci','tri','votrelec']},
   clue:'Na konci slova sa niekomu vypína hlas. Kanál 04 skrýva pravopisný trik.'},
  {no:4,fq:'101.5',name:'Stratený hlas',d:'Prečo počujeme dup, ale píšeme dub.',
   intro:['KANÁL 04','Stratený hlas','Počuješ dup, píšeš dub.','Naučíš sa trik, ako napísať správne písmeno na konci slova.'],
   story:{junior:'Povedz nahlas: dub. Počuješ na konci p? Na konci slova je dvojča unavené a šepká. Trik: predĺž slovo! Duby – a b je späť. Tak zistíš, čo napísať.',
    stred:'Na konci slova sa hlas vypne: dub znie [dup], hrad [hrat]. Volá sa to [[spodobovanie]] (stretneš ho neskôr aj vo vnútri slova). Pravopis však ukazuje, aké slovo naozaj je. Trik: [[predĺženie slova|predĺž slovo]] – duby, hrady – a pravé písmeno sa ozve.',
-   senior:'[[spodobovanie]] nájdeš na začiatku slova, vo vnútri slova, na konci slova aj na hranici slov. [[výslovnosť]] a [[pravopis]] sa tu rozchádzajú – dub [dup], vták [fták], s bratom [z bratom]. Pravopis overíš predĺžením alebo príbuzným slovom. Oprav posledné vysielanie.'},
+   senior:'[[spodobovanie|Spodobovanie]] nájdeš na začiatku slova, vo vnútri slova, na konci slova aj na hranici slov. [[výslovnosť|Výslovnosť]] a [[pravopis]] sa tu rozchádzajú – dub [dup], vták [fták], s bratom [z bratom]. Pravopis overíš predĺžením alebo príbuzným slovom. Oprav posledné vysielanie.'},
   tasks:{junior:['koniec','opravar'],stred:['koniec','opravar'],senior:['koniec','vyslovnost','typ']},
   clue:'Pult je opravený! Teraz to dokáž v záverečnej skúške.'}
 ];
@@ -739,18 +739,18 @@ function chapter(c,cur){
  restart();
 }
 function hintFor(id){return({
- krk:'Hmatový test používame iba pri úžinových hláskach (z–s, ž–š, v–f, h–ch), ktoré sa dajú ťahať bez samohlásky – inak dieťa cíti chvenie samohlásky a nie spoluhlásky. Záverové páry (b–p, d–t, g–k…) precvičuje úloha Vypínač hlasu porovnávaním začiatku slabík.',
+ krk:'Hmatový test používame iba pri úžinových hláskach (z–s, ž–š, v–f, h–ch), ktoré sa dajú ťahať bez samohlásky – inak dieťa cíti chvenie samohlásky a nie spoluhlásky. Záverové páry (b–p, d–t, ď–ť, g–k) a polozáverové páry (dz–c, dž–č) precvičuje úloha Vypínač hlasu porovnávaním začiatku slabík.',
  vypinac:'Kľúčová myšlienka: [[párové spoluhlásky]] majú väčšinou rovnaké [[miesto tvorenia]] (výnimka h – ch). Dieťa nehľadá v tabuľke, ale v ústach.',
- dvekose:'Ak dieťa váha, nech hlásku povie s rukou na krku alebo so zapchatými ušami – znelá hláska „hučí v hlave“.',
+ dvekose:'Ak dieťa váha pri úžinovej spoluhláske, napríklad pri z alebo s, nech ju vysloví bez samohlásky s prstami na krku. Keď si dieťa zapchá uši a vysloví znelé z, môže mať pocit, že mu „hučí v hlave“.',
  pexeso:'Pri každom nájdenom páre nech dieťa obe hlásky povie nahlas: pri väčšine párov sa ústa nehýbu inak (výnimka h – ch).',
  spoj:'Párov je 10. Netreba ich memorovať – väčšina dvojíc sa tvorí na tom istom mieste, výnimkou je h (hrtan) – ch (mäkké podnebie).',
  usta:'Zjednodušené miesta tvorenia. Pozor na h – ch: v spisovnej slovenčine je h hrtanová (laryngálna) znelá spoluhláska, ch zadopodnebná (velárna) neznelá. Pár tvoria preto, že sa pri spodobovaní navzájom zastupujú (sneh [sňech], vrch hory [vrh hori]).',
- spevaci:'[[nepárové spoluhlásky|Nepárové znelé spoluhlásky]] nemajú neznelý párový náprotivok. Pri znelostnom spodobovaní sa preto nemenia na neznelú párovú spoluhlásku. Spievanie robíme v slabikách (ma-ma-ma, la-la-la): ťahané m, n, l, r znejú osamote podobne a deti ich ťažko rozlíšia, slabika s samohláskou ich odlíši jasne.',
+ spevaci:'[[nepárové spoluhlásky|Znelé nepárové spoluhlásky]] nemajú neznelý párový náprotivok. Pri znelostnom spodobovaní sa preto nemenia na neznelú párovú spoluhlásku. Spievame v slabikách (ma-ma-ma, la-la-la), dlhé ĺ a ŕ v slovách (stĺp, tŕň), aby deti spoluhlásky ľahšie rozlíšili. Spievanie je len pomôcka: v slabikách sa dajú spievať aj iné spoluhlásky (ba-ba-ba). Rozhoduje, či hláska má neznelé párové dvojča.',
  tri:'Toto je presne tabuľka z učebnice – dieťa si ju však poskladá samo z vlastných pozorovaní.',
- votrelec:'Úloha precvičuje kategórie: znelé, neznelé, nepárové. Nechajte dieťa vysvetliť, prečo je votrelec iný.',
+ votrelec:'Úloha precvičuje kategórie: znelé párové, neznelé párové, znelé nepárové. Nechajte dieťa vysvetliť, prečo je votrelec iný.',
  koniec:'Overovanie [[predĺženie slova|predĺžením slova]]: tvar, kde za spoluhláskou nasleduje samohláska (dub → duby, nôž → nože). Toto je praktický zmysel celej témy.',
  opravar:'Chybné slovo je napísané „ako znie“. Dieťa ho odhalí predĺžením.',
- vyslovnost:'[[spodobovanie]] platí aj vnútri slova a na hranici slov. V plynulej spisovnej výslovnosti sa neznelá spoluhláska na konci slova vysloví znelo aj pred samohláskou alebo zvučnou (sonórnou) spoluhláskou nasledujúceho slova (myš ušla [myž ušla], vlak mešká [vlag mešká]). Pred pauzou zostáva neznelá.',
+ vyslovnost:'[[spodobovanie|Spodobovanie]] platí aj vnútri slova a na hranici slov. V plynulej spisovnej výslovnosti sa neznelá spoluhláska na konci slova vysloví znelo aj pred samohláskou alebo zvučnou (sonórnou) spoluhláskou nasledujúceho slova (myš ušla [miž ušla], vlak mešká [vlag mešká]). Pred pauzou zostáva neznelá.',
  typ:'Podľa polohy spodobujúcej sa spoluhlásky: na začiatku slova (vták [fták]), vo vnútri slova (kresba [krezba]), na konci slova pred pauzou (dub [dup]) a na hranici slov (s bratom [z bratom]). Mladší začínajú koncom slova, starší analyzujú všetky polohy.'
 })[id]||''}
 
